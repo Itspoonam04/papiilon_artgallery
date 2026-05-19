@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-5 text-center">
+            <div class="col-12">
+                <div class="mb-3">
+                    <i class="bi bi-heart-fill" style="color: #B5838D; font-size: 2rem;"></i>
+                </div>
+                <h2 class="display-5" style="font-family: 'Playfair Display', serif;">My Curated Favorites</h2>
+                <p class="text-muted italic" style="font-family: 'Playfair Display', serif;">Pieces that caught your eye and spoke to your soul.</p>
+                <div style="width: 40px; height: 1px; background: #3D3D3D; margin: 20px auto;"></div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            {% for item in items %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="wishlist-card position-relative">
+                    <a href="/wishlist/toggle/{{ item.product.id }}/" class="remove-wishlist" title="Toggle wishlist">
+                        <i class="bi bi-heart-fill" style="color: #B5838D;"></i>
+                    </a>
+
+                    <a href="/product/{{item.product.id}}/" class="text-decoration-none">
+                        <div class="wishlist-img-wrapper">
+                            <img src="{{ item.product.image.url }}" class="img-fluid" alt="{{ item.product.name }}">
+                            <div class="wishlist-overlay">
+                                <span class="small ls-2">VIEW PIECE</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-3 text-center">
+                            <h5 class="wishlist-title mb-1">{{ item.product.name }}</h5>
+                            <p class="wishlist-price">₹{{ item.product.price }}</p>
+                        </div>
+                    </a>
+                    
+                    <div class="text-center mt-2">
+                        <a href="/product/{{item.product.id}}/" class="btn btn-outline-dark btn-sm rounded-0 px-4 py-2 w-100" style="font-size: 0.7rem; letter-spacing: 1px;">
+                            CUSTOMIZE NOW
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="py-5" style="background-color: #FAF7F2; border: 1px dashed #B5838D;">
+                    <p class="text-muted mb-4">Your wishlist is currently a blank canvas.</p>
+                    <a href="/" class="btn btn-dark rounded-0 px-5 py-3 shadow-sm">EXPLORE THE GALLERY</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+    .ls-2 { letter-spacing: 2px; }
+    .italic { font-style: italic; }
+
+    /* Card Styling */
+    .wishlist-card {
+        transition: all 0.4s ease;
+        padding: 10px;
+        background: #fff;
+    }
+
+    .wishlist-img-wrapper {
+        position: relative;
+        overflow: hidden;
+        aspect-ratio: 1 / 1; /* Square images for a neat grid */
+        background-color: #F7EFE5;
+    }
+
+    .wishlist-img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    /* Hover Effects */
+    .wishlist-card:hover .wishlist-img-wrapper img {
+        transform: scale(1.1);
+    }
+
+    .wishlist-overlay {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(181, 131, 141, 0.2);
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0; transition: 0.3s;
+        color: white; font-weight: 600;
+    }
+
+    .wishlist-card:hover .wishlist-overlay {
+        opacity: 1;
+        backdrop-filter: blur(3px);
+    }
+
+    /* Remove Icon / Heart Toggle */
+    .remove-wishlist {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+        text-decoration: none;
+    }
+
+    .remove-wishlist:hover {
+        transform: scale(1.2);
+    }
+
+    /* Typography */
+    .wishlist-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1rem;
+        color: #3D3D3D;
+    }
+
+    .wishlist-price {
+        font-size: 0.85rem;
+        color: #B5838D;
+        font-weight: 500;
+    }
+
+    /* Buttons */
+    .btn-outline-dark:hover {
+        background-color: #3D3D3D;
+        color: #fff;
+    }
+</style>
+{% endblock %}

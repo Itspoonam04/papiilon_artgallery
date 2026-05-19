@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Playfair+Display:ital,wght@1,600&family=Cinzel:wght@600&family=Sacramento&family=Bebas+Neue&family=Lora:ital@1&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --accent-color: #B5838D;
+        --dark-text: #2D2D2D;
+        --light-bg: #FAF7F2;
+    }
+
+    .ls-1 { letter-spacing: 1.5px; }
+    .ls-2 { letter-spacing: 2.5px; }
+    
+    .btn, .form-control, .color-swatch, .font-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .preview-box {
+        background: #FDFBF9;
+        border: 1px solid rgba(181, 131, 141, 0.15);
+        border-radius: 12px;
+        min-height: 180px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .custom-card {
+        border: 1px solid #eee;
+        border-radius: 15px;
+        padding: 2rem;
+        background: white;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+
+    .purchase-option {
+        cursor: pointer;
+        border: 1px solid #eee;
+        padding: 1.25rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        transition: 0.3s;
+    }
+
+    .purchase-option:hover { border-color: var(--accent-color); background-color: var(--light-bg); }
+
+    .color-swatch {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        display: inline-block;
+    }
+
+    .btn-check:checked + .color-swatch {
+        transform: scale(1.2);
+        border-color: var(--accent-color);
+        box-shadow: 0 5px 15px rgba(181, 131, 141, 0.3);
+    }
+
+    .font-card {
+        border: 1px solid #eee;
+        padding: 1rem;
+        text-align: center;
+        cursor: pointer;
+        border-radius: 8px;
+        background: #fff;
+        display: block;
+    }
+
+    .btn-check:checked + .font-card {
+        border-color: var(--accent-color);
+        background: var(--light-bg);
+        color: var(--accent-color);
+        font-weight: 600;
+    }
+
+    .badge-stock {
+        background: #E9EDC9;
+        color: #6D6A75;
+        font-weight: 500;
+        letter-spacing: 1px;
+    }
+</style>
+
+<section class="py-5 bg-white">
+    <div class="container">
+        <form method="POST" action="/add-to-cart/{{ product.id }}/">
+            {% csrf_token %}
+            <div class="row g-5">
+                
+                <div class="col-lg-6">
+                    <div class="sticky-top" style="top: 100px;">
+                        <div class="overflow-hidden mb-4 shadow-sm" style="border-radius: 20px;">
+                            <img src="{{ product.image.url }}" class="img-fluid w-100" alt="{{ product.name }}" style="min-height: 500px; object-fit: cover;">
+                        </div>
+                        
+                        {% if product.is_customizable %}
+                        <div class="preview-box p-4 text-center">
+                            <span class="text-uppercase small ls-2 text-muted mb-3 d-block" style="font-weight: 600;">Artistic Visualization</span>
+                            <div class="d-flex align-items-center justify-content-center h-100">
+                                <h2 id="previewText" style="font-family: 'Playfair Display'; font-size: 2.5rem; color: #3D3D3D; word-break: break-all;">Your Name</h2>
+                            </div>
+                            <p class="small text-muted mt-3 italic mb-0">Crafting your unique perspective</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="ps-lg-4">
+                        <header class="mb-4">
+                            <h6 class="text-uppercase ls-2 mb-2" style="color: var(--accent-color); font-weight: 700;">{{ product.category.name }}</h6>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h1 class="display-5" style="font-family: 'Playfair Display'; font-weight: 600;">{{ product.name }}</h1>
+                                <a href="/wishlist/toggle/{{ product.id }}/" class="text-decoration-none">
+                                    {% if wishlist_item %}
+                                        <i class="bi bi-heart-fill" style="color: var(--accent-color); font-size: 2rem;"></i>
+                                    {% else %}
+                                        <i class="bi bi-heart" style="color: #ddd; font-size: 2rem;"></i>
+                                    {% endif %}
+                                </a>
+                            </div>
+                            <div class="d-flex align-items-center gap-3 mt-3">
+                                <h3 class="mb-0" style="font-family: 'Montserrat';">₹ {{ product.price }}</h3>
+                                {% if product.stock > 0 %}
+                                    <span class="badge badge-stock rounded-pill px-3 py-2 small">
+                                        <i class="bi bi-check2-circle me-1"></i> READY TO SHIP
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </header>
+
+                        <p class="text-muted mb-5" style="line-height: 1.8; font-size: 1.1rem;">{{ product.description }}</p>
+
+                        <div class="custom-card">
+                            <div class="purchase-option d-flex align-items-center">
+                                <input type="radio" name="purchase_mode" id="modeAsIs" value="asis" checked onclick="toggleCustom(false)" class="me-3">
+                                <label class="fw-bold mb-0 w-100" for="modeAsIs" style="cursor: pointer;">Purchase Original Design (As Is)</label>
+                            </div>
+
+                            {% if product.is_customizable %}
+                            <div class="purchase-option d-flex align-items-center">
+                                <input type="radio" name="purchase_mode" id="modeCustom" value="custom" onclick="toggleCustom(true)" class="me-3">
+                                <label class="fw-bold mb-0 w-100" for="modeCustom" style="cursor: pointer;">Personalize this Masterpiece</label>
+                            </div>
+
+                            <div id="customizationSection" style="display: none;" class="mt-4 pt-4 border-top">
+                                <div class="mb-5">
+                                    <label class="form-label small fw-bold text-uppercase ls-1">1. Personalization Text</label>
+                                    <input type="text" name="custom_text" id="nameInput" class="form-control form-control-lg border-0 border-bottom rounded-0 ps-0" placeholder="Type here..." style="background: transparent; border-color: #eee !important;">
+                                </div>
+
+                                {% if product.show_font_picker %}
+                                <div class="mb-5">
+                                    <label class="form-label small fw-bold text-uppercase ls-1 mb-3">2. Select Your Font Soul</label>
+                                    <div class="row g-2">
+                                        {% for val, label in product.get_standard_fonts.items %}
+                                        <div class="col-6">
+                                            <input type="radio" class="btn-check font-radio" name="selected_font" id="f{{forloop.counter}}" value="{{val}}" {% if forloop.first %}checked{% endif %}>
+                                            <label class="font-card w-100" for="f{{forloop.counter}}" style="font-family: {{val}};">{{label}}</label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                {% if product.show_color_picker %}
+                                <div class="mb-5">
+                                    <label class="form-label small fw-bold text-uppercase ls-1 mb-3">3. Choose Your Palette</label>
+                                    <div class="d-flex flex-wrap gap-3">
+                                        {% for name, hex in product.get_standard_colors.items %}
+                                        <div class="text-center">
+                                            <input type="radio" class="btn-check color-radio" name="selected_color" id="c{{forloop.counter}}" value="{{hex}}" {% if forloop.first %}checked{% endif %}>
+                                            <label class="color-swatch" for="c{{forloop.counter}}" style="background-color: {{hex}};"></label>
+                                            <div class="very-small text-muted mt-1" style="font-size: 10px;">{{name}}</div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                {% for extra in product.extra_options.all %}
+                                <div class="mb-4">
+                                    <label class="form-label small fw-bold text-uppercase ls-1">{{ extra.label }}</label>
+                                    <select name="extra_{{ extra.label|slugify }}" class="form-select rounded-0 bg-light border-0 py-3">
+                                        {% for v in extra.get_values_list %}
+                                            <option value="{{v}}">{{v}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            <button type="submit" class="btn btn-dark w-100 py-3 mt-4 rounded-pill shadow-lg text-uppercase ls-1" {% if product.stock <= 0 %}disabled{% endif %}>
+                                {% if product.stock > 0 %}Add to Collection{% else %}Out of Stock{% endif %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+    function toggleCustom(show) {
+        const section = document.getElementById('customizationSection');
+        section.style.display = show ? 'block' : 'none';
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const nameInput = document.getElementById("nameInput");
+        const previewText = document.getElementById("previewText");
+        const fontRadios = document.querySelectorAll('.font-radio');
+        const colorRadios = document.querySelectorAll('.color-radio');
+
+        // Text Preview
+        if(nameInput) {
+            nameInput.addEventListener("input", (e) => {
+                previewText.innerText = e.target.value || "Your Name";
+            });
+        }
+
+        // Font Preview
+        fontRadios.forEach(radio => {
+            radio.addEventListener("change", (e) => {
+                previewText.style.fontFamily = e.target.value;
+            });
+        });
+
+        // Color Preview
+        colorRadios.forEach(radio => {
+            radio.addEventListener("change", (e) => {
+                previewText.style.color = e.target.value;
+            });
+        });
+    });
+</script>
+{% endblock %}

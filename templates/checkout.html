@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="py-5" style="background-color: #FAF7F2;">
+    <div class="container py-5">
+        <div class="row g-5">
+            <div class="col-lg-7">
+                <div class="d-flex align-items-center mb-4">
+                    <span class="h2 me-3" style="font-family: 'Playfair Display', serif;">Finalize Your Order</span>
+                    <div class="flex-grow-1 border-bottom"></div>
+                </div>
+
+                <div class="card border-0 rounded-0 shadow-sm p-4 mb-5">
+                    <h5 class="mb-4 text-uppercase ls-2" style="font-size: 0.85rem; color: #B5838D;">Shipping Destination</h5>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="small text-muted mb-1">Full Name</label>
+                            <input type="text" name="full_name" form="mainOrderForm" class="form-control rounded-0 bg-light border-0" placeholder="Recipient name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small text-muted mb-1">Phone Number</label>
+                            <input type="tel" name="phone" form="mainOrderForm" class="form-control rounded-0 bg-light border-0" placeholder="For delivery updates" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="small text-muted mb-1">Street Address</label>
+                            <input type="text" name="address" form="mainOrderForm" class="form-control rounded-0 bg-light border-0" placeholder="House no, Building, Area" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small text-muted mb-1">City</label>
+                            <input type="text" name="city" form="mainOrderForm" class="form-control rounded-0 bg-light border-0" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small text-muted mb-1">Pincode</label>
+                            <input type="text" name="pincode" form="mainOrderForm" class="form-control rounded-0 bg-light border-0" required>
+                        </div>
+                    </div>
+                </div>
+
+                <h5 class="mb-3 text-uppercase ls-2" style="font-size: 0.85rem; color: #B5838D;">Gallery Review</h5>
+                <div class="card border-0 rounded-0 shadow-sm p-0 overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table mb-0 align-middle">
+                            <tbody style="background: white;">
+                                {% for item in items %}
+                                <tr>
+                                    <td class="ps-4 py-4" style="width: 100px;">
+                                        <img src="{{ item.product.image.url }}" class="img-fluid" style="height: 70px; width: 70px; object-fit: cover; border-radius: 4px;">
+                                    </td>
+                                    <td class="py-4">
+                                        <div class="fw-bold" style="font-family: 'Playfair Display', serif;">{{ item.product.name }}</div>
+                                        <div class="very-small text-muted text-uppercase mt-1">
+                                            Qty: {{ item.quantity }}
+                                        </div>
+                                    </td>
+                                    <td class="text-end pe-4 py-4 fw-light">₹{{ item.product.price }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="sticky-top" style="top: 100px;">
+                    <div class="card border-0 rounded-0 shadow-lg p-4" style="background-color: #3D3D3D; color: #fff;">
+                        <h4 class="mb-4" style="font-family: 'Playfair Display', serif;">Order Totals</h4>
+                        
+                        <form method="POST" id="mainOrderForm">
+                            {% csrf_token %}
+
+                            <label class="very-small text-uppercase ls-1 opacity-75 mb-2">Artisan Coupon</label>
+                            <div class="input-group mb-4">
+                                <input type="text" name="coupon" class="form-control rounded-0 border-0 bg-secondary text-white small" 
+                                       placeholder="Enter code" style="--bs-bg-opacity: .2;" value="{{ coupon_code|default:'' }}">
+                                <button class="btn btn-outline-light rounded-0 px-3" type="submit" name="apply_coupon">APPLY</button>
+                            </div>
+
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="very-small mb-3 text-{{ message.tags }} italic">{{ message }}</div>
+                                {% endfor %}
+                            {% endif %}
+
+                            <div class="d-flex justify-content-between mb-2 opacity-75">
+                                <span class="small text-uppercase ls-1">Subtotal</span>
+                                <span>₹{{ subtotal }}</span>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mb-2 opacity-75">
+                                <span class="small text-uppercase ls-1">GST (18%)</span>
+                                <span>₹{{ gst }}</span>
+                            </div>
+
+                            {% if discount > 0 %}
+                            <div class="d-flex justify-content-between mb-2 text-warning fw-bold">
+                                <span class="small text-uppercase ls-1">Discount Applied</span>
+                                <span>- ₹{{ discount }}</span>
+                            </div>
+                            {% endif %}
+
+                            <div class="d-flex justify-content-between mb-2 opacity-75">
+                                <span class="small text-uppercase ls-1">Shipping</span>
+                                <span class="text-success small">FREE</span>
+                            </div>
+                            
+                            <hr class="my-4 border-secondary">
+                            
+                            <div class="d-flex justify-content-between mb-5">
+                                <strong class="h3 mb-0" style="font-family: 'Playfair Display', serif;">Total</strong>
+                                <strong class="h3 mb-0 text-white">₹{{ total }}</strong>
+                            </div>
+
+                            <button type="submit" name="place_order" class="btn btn-light btn-lg w-100 rounded-0 py-3 mb-4 shadow" style="letter-spacing: 2px; font-weight: 600;">
+                                CONFIRM & PAY
+                            </button>
+                        </form>
+
+                        <div class="text-center opacity-50">
+                            <i class="bi bi-shield-check h4"></i>
+                            <div class="very-small text-uppercase">Secure Gallery Transaction</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .ls-1 { letter-spacing: 1px; }
+    .ls-2 { letter-spacing: 2px; }
+    .very-small { font-size: 0.7rem; }
+    .italic { font-style: italic; }
+
+    .form-control:focus {
+        background-color: #fff !important;
+        box-shadow: none;
+        border: 1px solid #B5838D !important;
+    }
+    
+    input[name="coupon"]::placeholder {
+        color: rgba(255,255,255,0.4);
+    }
+
+    .btn-light:hover {
+        background-color: #FAF7F2;
+        transform: translateY(-2px);
+        transition: 0.3s;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="py-5" style="background-color: #FAF7F2; min-height: 80vh;">
+    <div class="container">
+        <div class="row mb-5 text-center">
+            <div class="col-12">
+                <h6 class="text-uppercase ls-2 mb-2" style="color: #B5838D;">Your Collection Journey</h6>
+                <h2 class="display-5" style="font-family: 'Playfair Display', serif;">Order History</h2>
+                <div style="width: 50px; height: 2px; background: #B5838D; margin: 20px auto;"></div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                {% if orders %}
+                    <div class="d-none d-md-grid mb-3 px-4 text-muted small text-uppercase ls-1" style="grid-template-columns: 3fr 3fr 2fr 2fr 2fr;">
+                        <div>Order Details</div>
+                        <div class="text-center">Date</div>
+                        <div class="text-center">Total</div>
+                        <div class="text-center">Status</div>
+                        <div class="text-end">Action</div>
+                    </div>
+
+                    {% for order in orders %}
+                    <div class="card border-0 shadow-sm mb-3 rounded-0 overflow-hidden order-card">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-3">
+                                    <h6 class="mb-0" style="font-family: 'Playfair Display', serif;">#{{order.id}}</h6>
+                                    <span class="very-small text-muted text-uppercase">Gallery Order</span>
+                                </div>
+
+                                <div class="col-md-3 text-md-center mt-2 mt-md-0">
+                                    <span class="text-muted small">{{ order.created_at|date:"M d, Y" }}</span>
+                                </div>
+
+                                <div class="col-md-2 text-md-center mt-2 mt-md-0">
+                                    <span class="fw-bold">₹{{order.total_amount}}</span>
+                                </div>
+
+                                <div class="col-md-2 text-md-center mt-2 mt-md-0">
+                                    {% if order.status == 'Delivered' %}
+                                        <span class="badge rounded-pill bg-success-subtle text-success px-3">Delivered</span>
+                                    {% elif order.status == 'Processing' %}
+                                        <span class="badge rounded-pill bg-warning-subtle text-warning px-3">Artisan at Work</span>
+                                    {% else %}
+                                        <span class="badge rounded-pill bg-light text-dark border px-3">{{ order.status }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-2 text-end mt-3 mt-md-0">
+                                    <a href="/orders/{{order.id}}/" class="btn btn-outline-dark btn-sm rounded-0 px-4 w-100 w-md-auto transition-btn">
+                                        TRACK
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                {% else %}
+                    <div class="text-center py-5 bg-white shadow-sm">
+                        <i class="bi bi-box2-heart mb-3 d-block" style="font-size: 3rem; color: #B5838D;"></i>
+                        <p class="text-muted">You haven't started your collection yet.</p>
+                        <a href="/" class="btn btn-dark rounded-0 px-5 py-2 mt-2">EXPLORE ART</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .ls-1 { letter-spacing: 1px; }
+    .ls-2 { letter-spacing: 2px; }
+    .very-small { font-size: 0.65rem; }
+
+    .order-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-left: 4px solid transparent !important;
+    }
+
+    .order-card:hover {
+        transform: translateX(5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+        border-left: 4px solid #B5838D !important;
+    }
+
+    .badge {
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        font-size: 0.75rem;
+    }
+
+    .transition-btn:hover {
+        background-color: #3D3D3D;
+        color: #fff;
+    }
+</style>
+{% endblock %}

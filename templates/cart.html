@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="py-5" style="background-color: #fff;">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h6 class="text-uppercase ls-2 mb-2" style="color: #B5838D;">Your Selections</h6>
+                <h2 class="display-5" style="font-family: 'Playfair Display', serif;">Shopping Bag</h2>
+                <div style="width: 50px; height: 2px; background: #B5838D; margin: 20px auto;"></div>
+            </div>
+        </div>
+
+        <div class="row g-5">
+            <div class="col-lg-8">
+                {% if items %}
+                    {% for item in items %}
+                    <div class="card mb-4 border-0 shadow-sm rounded-0 p-3" style="background-color: #FAF7F2;">
+                        <div class="row align-items-center g-3">
+                            <div class="col-md-2">
+                                <img src="{{ item.product.image.url }}" class="img-fluid rounded-0 shadow-sm" style="height: 100px; width: 100%; object-fit: cover;">
+                            </div>
+                            
+                            <div class="col-md-5">
+                                <h5 class="mb-1" style="font-family: 'Playfair Display', serif;">{{ item.product.name }}</h5>
+                                <div class="d-flex flex-wrap gap-2 mt-1">
+                                    <span class="very-small text-muted text-uppercase">Text: {{ item.custom_name }}</span>
+                                    <span class="very-small text-muted text-uppercase">| {{ item.font|truncatechars:10 }}</span>
+                                </div>
+                                <div class="mt-2">
+                                    <span class="text-muted small">Price: ₹{{ item.product.price }}</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 text-center">
+                                <div class="d-flex align-items-center justify-content-center border bg-white" style="max-width: 120px; margin: 0 auto;">
+                                    <a href="/cart/update/{{item.id}}/?action=decrease" class="btn btn-link text-dark text-decoration-none px-3">
+                                        <i class="bi bi-dash"></i>
+                                    </a>
+                                    <span class="fw-bold px-2">{{ item.quantity }}</span>
+                                    <a href="/cart/update/{{item.id}}/?action=increase" class="btn btn-link text-dark text-decoration-none px-3">
+                                        <i class="bi bi-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 text-md-end">
+                                <p class="fw-bold mb-1" style="color: #3D3D3D;">₹{{ item.total_price }}</p>
+                                <a href="/cart/remove/{{item.id}}/" class="btn btn-sm text-danger text-uppercase p-0" 
+                                   style="font-size: 0.65rem; letter-spacing: 1px; text-decoration: none;">
+                                   REMOVE
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-5">
+                        <p class="text-muted">Your gallery bag is empty.</p>
+                        <a href="/" class="btn btn-outline-dark rounded-0 px-4">Continue Exploring</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 rounded-0 p-4 shadow-sm sticky-top" style="background-color: #F7EFE5; top: 100px;">
+                    <h4 class="mb-4" style="font-family: 'Playfair Display', serif;">Order Summary</h4>
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted small text-uppercase">Subtotal</span>
+                        <span class="fw-bold">₹{{ subtotal }}</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted small text-uppercase">Packaging</span>
+                        <span class="text-success small">FREE</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="text-muted small text-uppercase">Shipping</span>
+                        <span class="small italic">Calculated at checkout</span>
+                    </div>
+                    
+                    <hr class="border-secondary opacity-25">
+                    
+                    <div class="d-flex justify-content-between mb-4 mt-2">
+                        <strong class="h4" style="font-family: 'Playfair Display', serif;">Total</strong>
+                        <strong class="h4" style="color: #B5838D;">₹{{ subtotal }}</strong>
+                    </div>
+
+                    <a href="/orders/checkout/" class="btn btn-dark w-100 rounded-0 py-3 mb-3 shadow-sm" style="letter-spacing: 2px;">
+                        PROCEED TO CHECKOUT
+                    </a>
+                    
+                    <div class="text-center mt-4">
+                        <div class="d-flex justify-content-center gap-2 opacity-50 mb-3">
+                            <i class="bi bi-shield-lock"></i>
+                            <span class="very-small text-uppercase">Secure Transaction</span>
+                        </div>
+                        <img src="https://img.icons8.com/color/48/000000/visa.png" width="25">
+                        <img src="https://img.icons8.com/color/48/000000/mastercard.png" width="25">
+                        <img src="https://img.icons8.com/color/48/000000/upi.png" width="25">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .ls-2 { letter-spacing: 2px; }
+    .very-small { font-size: 0.7rem; }
+    .italic { font-style: italic; }
+    
+    /* Elegant Quantity Control */
+    .btn-link:hover { color: #B5838D !important; }
+    
+    .card { transition: all 0.3s ease; }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05) !important; }
+
+    .btn-dark { background-color: #3D3D3D; border: none; }
+    .btn-dark:hover { background-color: #B5838D; }
+</style>
+{% endblock %}

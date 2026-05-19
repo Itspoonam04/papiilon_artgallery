@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="py-5" style="background-color: #FAF7F2; min-height: 80vh;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="text-center mb-5">
+                    <h6 class="text-uppercase ls-2 mb-2" style="color: #B5838D;">Tracking Your Treasure</h6>
+                    <h2 class="display-5" style="font-family: 'Playfair Display', serif;">Order #{{order.id}}</h2>
+                    <p class="text-muted small">Placed on {{ order.created_at|date:"F d, Y" }}</p>
+                </div>
+
+                <div class="card border-0 rounded-0 shadow-sm p-4 mb-4">
+                    <div class="row align-items-center mb-5">
+                        <div class="col-md-6">
+                            <span class="small text-muted text-uppercase ls-1">Current Status:</span>
+                            <h4 class="mb-0 mt-1" style="font-family: 'Playfair Display', serif; color: #3D3D3D;">
+                                {{ order.status }}
+                            </h4>
+                        </div>
+                        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                            <span class="small text-muted text-uppercase ls-1">Investment:</span>
+                            <h4 class="mb-0 mt-1 text-dark">₹{{ order.total_amount }}</h4>
+                        </div>
+                    </div>
+
+                    <div class="timeline-container px-3">
+                        <div class="timeline-line"></div>
+                        <div class="row text-center position-relative">
+                            
+                            <div class="col timeline-step">
+                                <div class="step-icon {% if order.status == 'Pending' or order.status != 'Pending' %}active{% endif %}">
+                                    <i class="bi bi-check2"></i>
+                                </div>
+                                <p class="step-label">Order <br>Confirmed</p>
+                            </div>
+
+                            <div class="col timeline-step">
+                                <div class="step-icon {% if order.status == 'Processing' or order.status == 'Shipped' or order.status == 'Out for Delivery' or order.status == 'Delivered' %}active{% endif %}">
+                                    <i class="bi bi-brush"></i>
+                                </div>
+                                <p class="step-label">Artisan <br>at Work</p>
+                            </div>
+
+                            <div class="col timeline-step">
+                                <div class="step-icon {% if order.status == 'Shipped' or order.status == 'Out for Delivery' or order.status == 'Delivered' %}active{% endif %}">
+                                    <i class="bi bi-box-seam"></i>
+                                </div>
+                                <p class="step-label">Hand-Packed <br>& Shipped</p>
+                            </div>
+
+                            <div class="col timeline-step">
+                                <div class="step-icon {% if order.status == 'Out for Delivery' or order.status == 'Delivered' %}active{% endif %}">
+                                    <i class="bi bi-truck"></i>
+                                </div>
+                                <p class="step-label">In Your <br>Neighborhood</p>
+                            </div>
+
+                            <div class="col timeline-step">
+                                <div class="step-icon {% if order.status == 'Delivered' %}active{% endif %}">
+                                    <i class="bi bi-house-heart"></i>
+                                </div>
+                                <p class="step-label">Home <br>At Last</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column flex-md-row gap-3 justify-content-center mt-5">
+                    <a href="{% url 'generate_invoice' order.id %}" class="btn btn-dark rounded-0 px-5 py-3 shadow-sm">
+                        <i class="bi bi-file-earmark-pdf me-2"></i> DOWNLOAD INVOICE
+                    </a>
+                    <a href="/" class="btn btn-outline-dark rounded-0 px-5 py-3">
+                        BACK TO GALLERY
+                    </a>
+                </div>
+
+                <div class="mt-5 text-center p-4" style="border: 1px dashed rgba(181, 131, 141, 0.4); border-radius: 8px;">
+                    <p class="small text-muted mb-0">
+                        Questions about your creation? <br>
+                        Contact the Studio at <strong style="color: #B5838D;">hello@papillongallery.com</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .ls-1 { letter-spacing: 1px; }
+    .ls-2 { letter-spacing: 2px; }
+    
+    /* Timeline Logic */
+    .timeline-container {
+        position: relative;
+        padding-top: 20px;
+    }
+
+    .timeline-line {
+        position: absolute;
+        top: 35px;
+        left: 10%;
+        right: 10%;
+        height: 2px;
+        background-color: #eee;
+        z-index: 1;
+    }
+
+    .timeline-step {
+        z-index: 2;
+    }
+
+    .step-icon {
+        width: 32px;
+        height: 32px;
+        background-color: #eee;
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        transition: all 0.4s ease;
+        font-size: 0.9rem;
+    }
+
+    .step-icon.active {
+        background-color: #B5838D;
+        box-shadow: 0 0 0 8px rgba(181, 131, 141, 0.1);
+    }
+
+    .step-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+        color: #999;
+        line-height: 1.4;
+    }
+
+    .step-icon.active + .step-label {
+        color: #3D3D3D;
+    }
+
+    .btn-dark:hover {
+        background-color: #B5838D;
+        border-color: #B5838D;
+    }
+</style>
+{% endblock %}

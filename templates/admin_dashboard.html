@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Papillon | Artisan Dashboard</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --papillon-cream: #FAF7F2;
+            --papillon-rose: #B5838D;
+            --papillon-dark: #3D3D3D;
+            --glass: rgba(255, 255, 255, 0.8);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--papillon-cream);
+            color: var(--papillon-dark);
+            margin: 0;
+            padding: 40px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: var(--papillon-dark);
+        }
+
+        /* Stats Grid */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 0; /* Gallery style is often sharp or very slightly rounded */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-bottom: 3px solid var(--papillon-rose);
+        }
+
+        .card h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        .card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin: 0;
+            color: var(--papillon-dark);
+        }
+
+        /* Chart Section */
+        .chart-container {
+            background: white;
+            padding: 30px;
+            border-radius: 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            margin-bottom: 40px;
+            max-height: 400px;
+        }
+
+        /* Orders Table */
+        .orders {
+            background: white;
+            padding: 40px;
+            border-radius: 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        }
+
+        .orders h2 {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #aaa;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        td {
+            padding: 20px 15px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #f9f9f9;
+        }
+
+        .status-pill {
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            background: #eee;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 20px; }
+            .dashboard { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Artisan Studio <span style="font-weight: 300; font-style: italic;">Insights</span></h1>
+        <a href="/" style="text-decoration: none; color: var(--papillon-rose); font-weight: 600; font-size: 0.8rem; letter-spacing: 1px;">VIEW GALLERY →</a>
+    </div>
+
+    <div class="dashboard">
+        <div class="card">
+            <h3>Revenue</h3>
+            <h2>₹{{ total_revenue }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Order Volume</h3>
+            <h2>{{ total_orders }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Inventory</h3>
+            <h2>{{ total_products }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Community</h3>
+            <h2>{{ total_customers }}</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="chart-container">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="orders">
+        <h2>Recent Sales</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Collector</th>
+                    <th>Investment</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in recent_orders %}
+                <tr>
+                    <td>#{{ order.id }}</td>
+                    <td><strong>{{ order.user.username }}</strong></td>
+                    <td>₹{{ order.total_amount }}</td>
+                    <td>{{ order.created_at|date:"M d, Y" }}</td>
+                    <td><span class="status-pill">Processing</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('salesChart');
+        
+        // Custom Font for Chart
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#888';
+
+        new Chart(ctx, {
+            type: 'line', // Line chart looks more "aesthetic" for business growth
+            data: {
+                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"], // Placeholder labels
+                datasets: [{
+                    label: 'Revenue Trend',
+                    data: [12000, 19000, 15000, 25000, 22000, 30000], // Example trend
+                    borderColor: '#B5838D',
+                    backgroundColor: 'rgba(181, 131, 141, 0.1)',
+                    fill: true,
+                    tension: 0.4, // Curvy lines
+                    borderWidth: 3,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#B5838D',
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true, grid: { display: false } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,466 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --pastel-cream: #FDFBF9;
+        --pastel-sage: #E7EADF;
+        --pastel-rose: #D9AEB6;
+        --pastel-dusty: #B5838D;
+        --dark-art: #2D2D2D;
+    }
+
+    body { font-family: 'Montserrat', sans-serif; background-color: var(--pastel-cream); color: var(--dark-art); }
+    .title-font { font-family: 'Playfair Display', serif; }
+    .ls-2 { letter-spacing: 3px; }
+    
+    /* Elegant Arch Shapes */
+    .arch-mask {
+        border-radius: 200px 200px 20px 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    }
+
+    /* Floating Animations */
+    .float-anim { animation: float 6s ease-in-out infinite; }
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+        100% { transform: translateY(0px); }
+    }
+
+    /* Custom Navbar Spacing for Hero */
+    .hero-section { padding: 100px 0; position: relative; overflow: hidden; }
+
+    /* Abstract Blob Shapes */
+    .blob-bg {
+        position: absolute;
+        z-index: -1;
+        filter: blur(80px);
+        opacity: 0.4;
+        border-radius: 50%;
+    }
+</style>
+
+{% if announcement %}
+<div class="announcement-bar text-center py-2" style="background-color: var(--pastel-dusty); color: white; font-size: 0.75rem; letter-spacing: 2px;">
+    {{ announcement.header_text }}
+</div>
+{% endif %}
+
+<section class="hero-section">
+    <div class="blob-bg" style="width: 400px; height: 400px; background: var(--pastel-sage); top: -100px; right: -100px;"></div>
+    <div class="blob-bg" style="width: 300px; height: 300px; background: var(--pastel-rose); bottom: 100px; left: -100px;"></div>
+
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 text-center text-lg-start">
+                <span class="text-uppercase ls-2 small fw-bold mb-3 d-block" style="color: var(--pastel-dusty);">Since 2026 | Handcrafted in Pune</span>
+                <h1 class="display-2 mb-4 title-font" style="line-height: 1.1;">
+                    Crafting <span style="font-style: italic; color: var(--pastel-dusty);">Elegance</span> <br> for your Doorstep.
+                </h1>
+                <p class="lead mb-5 text-muted px-lg-0" style="font-weight: 300; max-width: 500px; font-size: 1.1rem;">
+                    Bespoke nameplates where high-quality craftsmanship meets modern soul. A Pune-born designer brand for the sophisticated home.
+                </p>
+                <div class="d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-4">
+                    <a href="#shop" class="btn btn-dark btn-lg rounded-pill px-5 py-3 ls-2 shadow-sm">SHOP ART</a>
+                    <a href="#about" class="btn btn-outline-dark btn-lg rounded-pill px-5 py-3 ls-2">OUR STORY</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="position-relative float-anim">
+                    <div class="arch-mask" style="height: 600px;">
+                        <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=800" class="w-100 h-100 object-fit-cover">
+                    </div>
+                    <div class="position-absolute bg-white p-4 shadow-lg text-center" style="bottom: 40px; left: -30px; border-radius: 100px; border: 1px solid var(--pastel-sage);">
+                        <span class="d-block h2 mb-0 color-accent title-font">#1</span>
+                        <span class="very-small text-uppercase ls-1">Pune Dealer</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="shop" class="py-5" style="background-color: #FDFBF9;"> <div class="container py-4">
+        <div class="text-center mb-5 animate-fade-in">
+            <span class="text-uppercase ls-2 small fw-bold mb-2 d-block" style="color: #B5838D;">Signature Series</span>
+            <h2 class="display-5 title-font">Curated Collections</h2>
+            <div class="mx-auto" style="width: 40px; height: 1px; background: #B5838D; margin-top: 15px;"></div>
+        </div>
+
+        <div class="row g-3 g-md-4"> {% for category in categories %}
+            <div class="col-6 col-md-4"> <div class="category-wrapper">
+                    <a href="{% url 'category_products' category.slug %}" class="text-decoration-none">
+                        <div class="category-card">
+                            <div class="category-img-container">
+                                {% if category.image %}
+                                    <img src="{{ category.image.url }}" class="category-img" alt="{{ category.name }}">
+                                {% else %}
+                                    <div class="bg-light w-100 h-100 d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-image text-muted opacity-25" style="font-size: 2rem;"></i>
+                                    </div>
+                                {% endif %}
+                                
+                                <div class="category-overlay"></div>
+                            </div>
+
+                            <div class="category-content text-center">
+                                <h3 class="category-title">{{ category.name }}</h3>
+                                <span class="category-link text-uppercase">Explore</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section id="about" class="py-5" style="background-color: var(--pastel-sage);">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-5">
+                <div class="position-relative p-4">
+                    <div style="border-radius: 150px 0 150px 0; overflow: hidden;" class="shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=600" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 ms-auto mt-5 mt-lg-0">
+                <h6 class="text-uppercase ls-2 mb-4 fw-bold" style="color: var(--pastel-dusty);">The Artisan Philosophy</h6>
+                <h2 class="display-5 mb-4 title-font">Sophisticated Craft, <br>Personal Artistry.</h2>
+                <p class="text-muted mb-4 lead">
+                    We specialize in premium, customised nameplates across <strong>Alandi, Vadgaon Budruk, and Sinhgad Road</strong>.
+                </p>
+                <p class="text-muted mb-5">
+                    Our approach blends professional service with a friendly, artistic touch, ensuring your house motifs are as unique as your family.
+                </p>
+                <div class="d-flex gap-5">
+                    <div>
+                        <h3 class="title-font mb-0" style="color: var(--pastel-dusty);">100%</h3>
+                        <p class="small text-uppercase ls-1">Handmade</p>
+                    </div>
+                    <div class="border-start ps-5">
+                        <h3 class="title-font mb-0" style="color: var(--pastel-dusty);">Bespoke</h3>
+                        <p class="small text-uppercase ls-1">Custom motifs</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="display-5 title-font">The Material Palette</h2>
+            <p class="text-muted ls-2 text-uppercase small">Luxury in every texture</p>
+        </div>
+        
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="p-5 text-center shadow-sm h-100" style="background: white; border-radius: 30px; border-bottom: 5px solid var(--pastel-sage);">
+                    <i class="bi bi-tree h1 d-block mb-4" style="color: var(--pastel-sage);"></i>
+                    <h4 class="title-font mb-3">Wooden Texture</h4>
+                    <p class="small text-muted">Rustic yet sophisticated designs for a warm, natural entrance feel.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-5 text-center shadow-sm h-100" style="background: white; border-radius: 30px; border-bottom: 5px solid var(--pastel-rose);">
+                    <i class="bi bi-gem h1 d-block mb-4" style="color: var(--pastel-rose);"></i>
+                    <h4 class="title-font mb-3">Sleek Acrylic</h4>
+                    <p class="small text-muted">Modern, durable, and weather-resistant plates for a clean aesthetic.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-5 text-center shadow-sm h-100" style="background: white; border-radius: 30px; border-bottom: 5px solid var(--pastel-dusty);">
+                    <i class="bi bi-palette h1 d-block mb-4" style="color: var(--pastel-dusty);"></i>
+                    <h4 class="title-font mb-3">Hand-Painted</h4>
+                    <p class="small text-muted">Unique, intricate artwork signed by our artists for a personal flair.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<style>
+    /* Premium Gallery Styles */
+    .title-font { font-family: 'Playfair Display', serif; }
+    .ls-2 { letter-spacing: 2.5px; }
+
+    .category-wrapper {
+        perspective: 1000px;
+    }
+
+    .category-card {
+        position: relative;
+        background: transparent;
+        transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .category-img-container {
+        position: relative;
+        width: 100%;
+        padding-top: 135%; /* Aesthetic vertical ratio */
+        border-radius: 100px 100px 15px 15px; /* Subtle Arch Shape */
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+
+    .category-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 1.2s ease;
+    }
+
+    .category-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0);
+        transition: background 0.4s ease;
+    }
+
+    /* Floating Label Aesthetic */
+    .category-content {
+        position: absolute;
+        bottom: 15px;
+        left: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(5px);
+        padding: 15px 10px;
+        border-radius: 12px;
+        transform: translateY(10px);
+        transition: all 0.4s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .category-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 0.95rem;
+        margin-bottom: 2px;
+        color: #2D2D2D;
+    }
+
+    .category-link {
+        font-size: 0.65rem;
+        letter-spacing: 1.5px;
+        color: #B5838D;
+        font-weight: 700;
+        opacity: 0.8;
+    }
+
+    /* Hover States */
+    .category-card:hover .category-img {
+        transform: scale(1.1);
+    }
+
+    .category-card:hover .category-content {
+        transform: translateY(0);
+        background: #fff;
+    }
+
+    .category-card:hover .category-overlay {
+        background: rgba(181, 131, 141, 0.1); /* Subtle rose tint on hover */
+    }
+
+    /* Mobile Optimization */
+    @media (max-width: 768px) {
+        .category-img-container {
+            border-radius: 60px 60px 12px 12px; /* Slightly smaller arches for mobile */
+            padding-top: 125%;
+        }
+        .category-title {
+            font-size: 0.85rem;
+        }
+        .category-content {
+            padding: 10px 5px;
+            bottom: 10px;
+        }
+    }
+</style>
+
+<section class="py-5">
+    <div class="container text-center py-5" style="background: var(--pastel-rose); border-radius: 50px;">
+        <h2 class="display-4 title-font text-white mb-4">Nationwide Artistry</h2>
+        <p class="text-white opacity-75 mb-5 mx-auto" style="max-width: 600px;">
+            From our studio in <strong>Pune</strong> to clients in <strong>Hyderabad</strong>, we ship bespoke artistic combos across India with professional care.
+        </p>
+        <div class="d-flex justify-content-center gap-4 text-white small fw-bold">
+            <span class="badge rounded-pill px-4 py-2" style="background: rgba(255,255,255,0.2);">Alandi</span>
+            <span class="badge rounded-pill px-4 py-2" style="background: rgba(255,255,255,0.2);">Vadgaon</span>
+            <span class="badge rounded-pill px-4 py-2" style="background: rgba(255,255,255,0.2);">Sinhgad Road</span>
+        </div>
+    </div>
+</section>
+<section id="heritage" class="py-5" style="background-color: #FAF7F2; overflow: hidden;">
+    <div class="container py-5">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <div class="heritage-map-ui p-5 shadow-sm" style="background: white; border-radius: 100px 20px 100px 20px; border: 1px solid #E7EADF;">
+                    <h6 class="text-uppercase ls-2 mb-4" style="color: #B5838D;">Local Roots</h6>
+                    <h2 class="display-5 title-font mb-4">Born in Pune, <br>Designed for India.</h2>
+                    <p class="text-muted mb-5">
+                        From our artistic studio in <strong>Sinhgad Road</strong>, we've transformed entrances across <strong>Alandi, Vadgaon Budruk</strong>, and beyond. We take pride in being Pune's trusted choice for premium nameplates.
+                    </p>
+                    
+                    <ul class="list-unstyled">
+                        <li class="mb-3 d-flex align-items-center">
+                            <span class="dot-marker me-3"></span>
+                            <span class="small fw-bold ls-1 text-uppercase">Top Dealer in Vadgaon Budruk</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <span class="dot-marker me-3"></span>
+                            <span class="small fw-bold ls-1 text-uppercase">Signature Designs in Alandi</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <span class="dot-marker me-3"></span>
+                            <span class="small fw-bold ls-1 text-uppercase">Custom Delivery to Hyderabad</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="position-relative">
+                    <div class="row g-2">
+                        <div class="col-7">
+                            <img src="https://images.unsplash.com/photo-1595853035070-59a39fe84de3?auto=format&fit=crop&w=600" class="img-fluid shadow-sm" style="border-radius: 30px 0 0 30px;">
+                        </div>
+                        <div class="col-5">
+                            <div class="bg-accent p-4 text-white d-flex align-items-center justify-content-center mb-2" style="height: 150px; border-radius: 0 30px 0 0;">
+                                <h2 class="title-font mb-0">Pune</h2>
+                            </div>
+                            <img src="https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?auto=format&fit=crop&w=400" class="img-fluid shadow-sm" style="border-radius: 0 0 30px 0;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="py-5 bg-white">
+    <div class="container py-5">
+        <div class="row g-5">
+            <div class="col-lg-4">
+                <h2 class="display-5 title-font mb-4">Get in <br><span class="accent-text">Touch.</span></h2>
+                <p class="text-muted mb-5">Ready to start your custom project? Our team is a message away.</p>
+                
+                <div class="contact-item mb-4 d-flex">
+                    <i class="bi bi-geo-alt h4 me-3 color-accent"></i>
+                    <div>
+                        <h6 class="text-uppercase ls-1 mb-1">Our Studio</h6>
+                        <p class="small text-muted">Sinhgad Road, Vadgaon Budruk, Pune, Maharashtra</p>
+                    </div>
+                </div>
+
+                <div class="contact-item mb-4 d-flex">
+                    <i class="bi bi-whatsapp h4 me-3 color-accent"></i>
+                    <div>
+                        <h6 class="text-uppercase ls-1 mb-1">WhatsApp Enquiry</h6>
+                        <p class="small text-muted">+91 XXX XXX XXXX</p>
+                    </div>
+                </div>
+
+                <div class="contact-item d-flex">
+                    <i class="bi bi-envelope h4 me-3 color-accent"></i>
+                    <div>
+                        <h6 class="text-uppercase ls-1 mb-1">Email Us</h6>
+                        <p class="small text-muted">hello@papilloncreations.com</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7 ms-auto">
+                <form action="#" class="contact-form p-5 shadow-sm" style="background: #FDFBF9; border-radius: 20px;">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="small text-uppercase ls-1 fw-bold mb-2">Full Name</label>
+                            <input type="text" class="form-control rounded-0 border-0 border-bottom bg-transparent px-0" placeholder="Your Name">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small text-uppercase ls-1 fw-bold mb-2">Location</label>
+                            <input type="text" class="form-control rounded-0 border-0 border-bottom bg-transparent px-0" placeholder="e.g. Pune / Hyderabad">
+                        </div>
+                        <div class="col-12">
+                            <label class="small text-uppercase ls-1 fw-bold mb-2">Interested In</label>
+                            <select class="form-select rounded-0 border-0 border-bottom bg-transparent px-0">
+                                <option>Custom Nameplate</option>
+                                <option>Home Decor Combo</option>
+                                <option>Bespoke Art Project</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="small text-uppercase ls-1 fw-bold mb-2">Your Message</label>
+                            <textarea class="form-control rounded-0 border-0 border-bottom bg-transparent px-0" rows="4" placeholder="Tell us about your vision..."></textarea>
+                        </div>
+                        <div class="col-12 mt-5">
+                            <button class="btn btn-dark btn-lg rounded-pill px-5 py-3 w-100 ls-2">SEND MESSAGE</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<style>
+    /* Premium Hover Effects */
+    .btn-dark { background: var(--dark-art); border: none; }
+    .btn-dark:hover { background: var(--pastel-dusty); transform: translateY(-3px); }
+    
+    .category-card img { transition: 0.6s ease; }
+    .category-card:hover img { transform: scale(1.08); }
+
+    .accordion-button:not(.collapsed) { color: var(--pastel-dusty); background: none; }
+
+    /* Mobile 2 per row logic */
+    @media (max-width: 768px) {
+        .display-1 { font-size: 3rem; }
+        .hero-section { padding: 60px 0; }
+        .arch-mask { height: 400px; }
+    }
+    /* Accent Helper */
+    .bg-accent { background-color: #B5838D; }
+    .color-accent { color: #B5838D; }
+    
+    /* Dot Marker for List */
+    .dot-marker {
+        width: 8px;
+        height: 8px;
+        background: #B5838D;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    /* Form Controls Reset */
+    .contact-form .form-control:focus, 
+    .contact-form .form-select:focus {
+        box-shadow: none;
+        border-color: #B5838D !important;
+        background: transparent;
+    }
+
+    /* Animation for Entrance */
+    .heritage-map-ui {
+        transition: transform 0.6s ease;
+    }
+    .heritage-map-ui:hover {
+        transform: translateY(-10px);
+    }
+
+    /* Mobile Logic */
+    @media (max-width: 768px) {
+        .contact-form { padding: 30px 20px !important; }
+        .heritage-map-ui { border-radius: 50px 15px 50px 15px !important; padding: 30px !important; }
+    }
+</style>
+{% endblock %}
