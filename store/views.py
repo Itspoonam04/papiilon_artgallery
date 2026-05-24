@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.db.models import Sum
 from .models import Product, Category, ExtraCustomization
+from django.contrib.auth.forms import UserCreationForm
 from wishlist.models import Wishlist
 from cart.models import Cart, CartItem
 from orders.models import Order
@@ -112,3 +113,16 @@ def admin_dashboard(request):
         "low_stock_products": low_stock_products,
     }
     return render(request, "admin_dashboard.html", context)
+
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'signup.html', {'form': form})
